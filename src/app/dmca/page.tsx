@@ -9,7 +9,6 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle } from "lucide-react";
-import { API_BASE } from "@/lib/api";
 
 const schema = z.object({
   name: z.string().min(2, "Name required"),
@@ -34,7 +33,7 @@ export default function DMCAPage() {
   async function onSubmit(data: FormData) {
     setServerError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/dmca`, {
+      const res = await fetch("/api/dmca", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

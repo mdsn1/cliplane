@@ -9,7 +9,6 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle } from "lucide-react";
-import { API_BASE } from "@/lib/api";
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -32,7 +31,7 @@ export default function ContactPage() {
   async function onSubmit(data: FormData) {
     setServerError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/contact`, {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: data.name, email: data.email, subject: data.subject, message: data.message }),
