@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Paper plane with integrated downward arrow -->
+  <!-- Main plane body -->
+  <path d="M8 32L56 8L44 56L32 40L8 32Z" fill="#3B82F6"/>
+  <!-- Wing fold detail -->
+  <path d="M32 40L44 56L44 32L32 40Z" fill="#2563EB"/>
+  <!-- Download arrow integrated -->
+  <path d="M32 20V36M32 36L26 30M32 36L38 30" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

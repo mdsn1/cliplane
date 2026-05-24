@@ -1,0 +1,112 @@
+{
+  "nav": {
+    "tools": "Tools",
+    "pricing": "Pricing",
+    "blog": "Blog",
+    "about": "About",
+    "platforms": "Platforms",
+    "tiktok": "TikTok Downloader",
+    "pinterest": "Pinterest Downloader",
+    "twitter": "Twitter Downloader",
+    "facebook": "Facebook Downloader",
+    "reddit": "Reddit Downloader",
+    "vimeo": "Vimeo Downloader",
+    "dailymotion": "Dailymotion Downloader"
+  },
+  "hero": {
+    "title": "Download Any Video. No Watermark. No Limits.",
+    "subtitle": "Free downloader for TikTok, Pinterest, Twitter, Reddit, Facebook, Vimeo, and Dailymotion. No login required. No software install.",
+    "inputPlaceholder": "Paste a video URL here...",
+    "downloadBtn": "Download",
+    "pasteBtn": "Paste URL",
+    "detecting": "Detecting platform...",
+    "detected": "Detected: {platform}"
+  },
+  "trust": {
+    "noLogin": "No Login",
+    "noWatermark": "No Watermark",
+    "hdQuality": "HD Quality",
+    "freeForever": "Free Forever"
+  },
+  "counter": {
+    "label": "videos downloaded and counting"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1Title": "Paste Your URL",
+    "step1Desc": "Copy the video URL from any supported platform and paste it into the input bar above.",
+    "step2Title": "Choose Quality",
+    "step2Desc": "Select your preferred video quality — from 360p up to 1080p HD or original quality.",
+    "step3Title": "Download Instantly",
+    "step3Desc": "Click download and your video saves directly to your device. No registration, no watermarks."
+  },
+  "features": {
+    "title": "Why Cliplane?",
+    "speedTitle": "Lightning Fast",
+    "speedDesc": "Videos resolve and download in seconds — no waiting, no queuing.",
+    "qualityTitle": "HD Quality",
+    "qualityDesc": "Download at the highest available quality, up to 1080p and beyond.",
+    "privacyTitle": "Private & Secure",
+    "privacyDesc": "We never store your URLs or personal data. Your downloads are yours alone.",
+    "noLoginTitle": "No Login Required",
+    "noLoginDesc": "No account, no signup, no email. Just paste and download.",
+    "allDevicesTitle": "All Devices",
+    "allDevicesDesc": "Works perfectly on desktop, tablet, and mobile browsers.",
+    "noWatermarkTitle": "No Watermarks",
+    "noWatermarkDesc": "Download clean, watermark-free videos from supported platforms."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions"
+  },
+  "footer": {
+    "disclaimer": "Cliplane is intended for personal use only. Please respect the copyright of content creators. We are not affiliated with TikTok, Pinterest, Twitter, Reddit, Facebook, Vimeo, or Dailymotion.",
+    "platforms": "Platforms",
+    "company": "Company",
+    "legal": "Legal",
+    "tools": "Tools",
+    "allRightsReserved": "All rights reserved."
+  },
+  "download": {
+    "resolving": "Fetching video info...",
+    "selectQuality": "Select Quality",
+    "downloadVideo": "Download Video",
+    "downloadAudio": "Download MP3",
+    "fileSize": "File size",
+    "quality": "Quality",
+    "format": "Format",
+    "duration": "Duration",
+    "author": "Author",
+    "privateContent": "This content is private and cannot be accessed without authorisation. Cliplane only supports publicly available content.",
+    "invalidUrl": "Please enter a valid video URL from a supported platform.",
+    "unsupportedPlatform": "This platform is not supported. We support TikTok, Pinterest, Twitter, Reddit, Facebook, Vimeo, and Dailymotion.",
+    "error": "Something went wrong. Please try again.",
+    "proRequired": "Upgrade to Pro for 1080p+ quality and batch downloads."
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Start free, upgrade when you need more.",
+    "free": "Free",
+    "pro": "Pro",
+    "freePrice": "$0",
+    "proMonthlyPrice": "$4.99",
+    "proAnnualPrice": "$39.99",
+    "perMonth": "/ month",
+    "perYear": "/ year",
+    "save33": "Save 33%",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "getStarted": "Get Started Free",
+    "startPro": "Start Pro",
+    "mostPopular": "Most Popular",
+    "guarantee": "30-day money-back guarantee",
+    "freeFeatures": ["10 downloads per day", "720p max quality", "Single URL", "Standard speed"],
+    "proFeatures": ["Unlimited downloads", "1080p+ quality", "Batch up to 25 URLs", "MP3 audio extraction", "Priority speed", "No ads", "30-day history"]
+  },
+  "errors": {
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "invalidUrl": "Please enter a valid URL.",
+    "minLength": "Must be at least {min} characters.",
+    "maxLength": "Must be at most {max} characters."
+  }
+}

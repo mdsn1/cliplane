@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <g transform="translate(0, 0)">
+    <path d="M8 24L40 8L33 42L24 32L8 24Z" fill="#3B82F6"/>
+    <path d="M24 32L33 42L33 24L24 32Z" fill="#2563EB"/>
+    <path d="M24 15V27M24 27L19 22M24 27L29 22" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="58" y="32" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.5" fill="#0A0A0F">Clip</text>
+  <text x="106" y="32" font-family="Inter, -apple-system, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.5" fill="#3B82F6">lane</text>
+  <rect x="78" y="10" width="4" height="4" rx="1" fill="#3B82F6"/>
+</svg>
