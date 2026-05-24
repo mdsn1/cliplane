@@ -1,8 +1,15 @@
-import { NextRequest } from "next/server";
-
-const BACKEND = process.env.API_URL ?? "http://localhost:8000";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  const BACKEND = process.env.API_URL;
+
+  if (!BACKEND) {
+    return NextResponse.json(
+      { detail: "Backend not configured. Set the API_URL environment variable in Vercel." },
+      { status: 503 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const backendUrl = new URL(`${BACKEND}/api/download`);
@@ -19,10 +26,11 @@ export async function GET(request: NextRequest) {
     if (contentLength) headers.set("Content-Length", contentLength);
 
     return new Response(res.body, { status: res.status, headers });
-  } catch {
-    return new Response(JSON.stringify({ detail: "Failed to reach the download server." }), {
-      status: 502,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json(
+      { detail: `Cannot reach backend at ${BACKEND}: ${message}` },
+      { status: 502 }
+    );
   }
 }
