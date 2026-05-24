@@ -7,6 +7,7 @@ import { FAQAccordion, type FAQItem } from "@/components/FAQAccordion";
 import { Button } from "@/components/ui/button";
 import { Check, Shield, Zap, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { API_BASE } from "@/lib/api";
 
 const FREE_FEATURES = [
   "10 downloads per day",
@@ -43,7 +44,7 @@ export default function PricingPage() {
 
   async function handleCheckout(plan: "monthly" | "annual") {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/stripe/create-checkout-session`, {
+      const res = await fetch(`${API_BASE}/api/stripe/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),
