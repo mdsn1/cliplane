@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # Supabase
     SUPABASE_URL: str
     SUPABASE_SERVICE_KEY: str
+    DATABASE_URL: Optional[str] = None  # direct PostgreSQL connection string
 
     # Redis (Upstash)
     UPSTASH_REDIS_URL: str

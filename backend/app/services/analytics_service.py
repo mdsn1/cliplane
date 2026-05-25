@@ -13,14 +13,11 @@ _pool: Optional[asyncpg.Pool] = None  # type: ignore[type-arg]
 async def get_pool() -> Optional[asyncpg.Pool]:  # type: ignore[type-arg]
     global _pool
     if _pool is None:
+        if not settings.DATABASE_URL:
+            logger.warning("DATABASE_URL not set — DB features disabled")
+            return None
         try:
-            _pool = await asyncpg.create_pool(
-                settings.SUPABASE_URL.replace("https://", "postgresql://").replace(
-                    ".supabase.co", ".supabase.co:5432"
-                ),
-                min_size=1,
-                max_size=5,
-            )
+            _pool = await asyncpg.create_pool(settings.DATABASE_URL, min_size=1, max_size=5)
         except Exception as exc:
             logger.warning("db_pool_creation_failed", error=str(exc))
             return None
