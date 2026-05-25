@@ -1,5 +1,7 @@
 import hashlib
+import re
 import yt_dlp
+import httpx
 from typing import Any, Optional
 from app.schemas.responses import VideoFormat, ResolveResponse
 from app.utils.platform_detector import detect_platform
@@ -20,6 +22,8 @@ ERROR_MAP: dict[str, str] = {
     "HTTP Error 403": "Access denied. This content may be protected or region-restricted.",
     "HTTP Error 404": "Video not found. The URL may be incorrect or the content may have been deleted.",
     "Unsupported URL": "This URL is not supported by Cliplane.",
+    "Account authentication is required": "Reddit now requires account login to access videos. Try a direct video link or use a different platform.",
+    "IP address is blocked": "This platform is temporarily blocking downloads from our servers. Please try again later or use a different URL.",
 }
 
 
@@ -114,6 +118,80 @@ def filter_formats_for_free(response: ResolveResponse) -> ResolveResponse:
     return response.model_copy(update={"formats": filtered})
 
 
+async def _resolve_reddit(url: str) -> ResolveResponse:
+    """Use Reddit's public JSON API — no auth needed for public posts."""
+    match = re.search(r'reddit\.com/r/([^/]+)/comments/([a-z0-9]+)', url, re.IGNORECASE)
+    if not match:
+        raise ValueError("Invalid Reddit URL format")
+
+    subreddit, post_id = match.groups()
+    api_url = f"https://www.reddit.com/r/{subreddit}/comments/{post_id}/.json"
+
+    async with httpx.AsyncClient(follow_redirects=True, timeout=20) as client:
+        resp = await client.get(api_url, headers={"User-Agent": "Mozilla/5.0 Cliplane/1.0"})
+        resp.raise_for_status()
+        data = resp.json()
+
+    post = data[0]["data"]["children"][0]["data"]
+    media = post.get("media") or post.get("secure_media")
+
+    if not media or "reddit_video" not in media:
+        raise ValueError("No downloadable video found in this Reddit post. It may be a link or image post.")
+
+    rv = media["reddit_video"]
+    fallback_url: str = rv.get("fallback_url", "")
+    if not fallback_url:
+        raise ValueError("Reddit video URL not available")
+
+    height: int = rv.get("height") or 720
+    width: int = rv.get("width") or 1280
+
+    formats: list[VideoFormat] = []
+    # Build multiple quality options from fallback URL pattern (DASH segments)
+    base_url = re.sub(r'DASH_\d+\.mp4.*', '', fallback_url)
+    for h in [1080, 720, 480, 360, 240]:
+        if h <= height:
+            formats.append(VideoFormat(
+                quality=f"{h}p",
+                size=None,
+                format_id=f"reddit_{h}",
+                url=f"{base_url}DASH_{h}.mp4",
+                ext="mp4",
+                has_audio=False,
+                is_video=True,
+                fps=rv.get("bitrate_kbps"),
+                vcodec="avc1",
+                acodec=None,
+            ))
+
+    if not formats:
+        formats.append(VideoFormat(
+            quality=f"{height}p",
+            size=None,
+            format_id="reddit_video",
+            url=fallback_url,
+            ext="mp4",
+            has_audio=False,
+            is_video=True,
+            fps=None,
+            vcodec="avc1",
+            acodec=None,
+        ))
+
+    thumbnail = post.get("thumbnail") or ""
+    if thumbnail in ("self", "default", "nsfw", ""):
+        thumbnail = None  # type: ignore[assignment]
+
+    return ResolveResponse(
+        title=post.get("title") or "Reddit Video",
+        thumbnail=thumbnail,
+        duration=rv.get("duration"),
+        author=post.get("author"),
+        platform="reddit",
+        formats=formats,
+    )
+
+
 async def resolve_video(url: str) -> ResolveResponse:
     cache_key = f"resolve:{hashlib.sha256(url.encode()).hexdigest()}"
     cached = await cache_service.get_json(cache_key)
@@ -127,9 +205,32 @@ async def resolve_video(url: str) -> ResolveResponse:
         "skip_download": True,
         "noplaylist": True,
         "extract_flat": False,
-        "cookiesfrombrowser": None,
         "socket_timeout": 30,
+        "geo_bypass": True,
+        "http_headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        },
+        "extractor_args": {
+            "tiktok": {
+                "app_name": ["trill"],
+                "app_version": ["34.1.2"],
+            },
+        },
     }
+
+    # Reddit: use JSON API directly — yt-dlp requires auth for Reddit
+    if "reddit.com" in url:
+        try:
+            result = await _resolve_reddit(url)
+            await cache_service.set(cache_key, result.model_dump(), ttl=CACHE_TTL)
+            logger.info("resolve_success", platform="reddit")
+            return result
+        except ValueError:
+            raise
+        except Exception as exc:
+            logger.warning("reddit_api_fallback_to_ytdlp", error=str(exc))
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
