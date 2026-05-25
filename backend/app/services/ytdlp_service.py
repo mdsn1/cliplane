@@ -220,7 +220,7 @@ async def resolve_video(url: str) -> ResolveResponse:
         },
     }
 
-    # Reddit: use JSON API directly — yt-dlp requires auth for Reddit
+    # Reddit blocks all datacenter IPs — neither yt-dlp nor JSON API works without residential proxies
     if "reddit.com" in url:
         try:
             result = await _resolve_reddit(url)
@@ -230,7 +230,8 @@ async def resolve_video(url: str) -> ResolveResponse:
         except ValueError:
             raise
         except Exception as exc:
-            logger.warning("reddit_api_fallback_to_ytdlp", error=str(exc))
+            logger.warning("reddit_api_blocked", error=str(exc))
+            raise ValueError("Reddit is currently blocking downloads from our servers. Please try a direct video link (v.redd.it) or use a different platform.")
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
