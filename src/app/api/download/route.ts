@@ -15,17 +15,19 @@ export async function GET(request: NextRequest) {
     const backendUrl = new URL(`${BACKEND}/api/download`);
     searchParams.forEach((value, key) => backendUrl.searchParams.set(key, value));
 
-    const res = await fetch(backendUrl.toString());
+    // Use redirect: "manual" so we receive the 302 instead of following it and proxying
+    const res = await fetch(backendUrl.toString(), { redirect: "manual" });
 
-    const headers = new Headers();
-    const contentType = res.headers.get("Content-Type");
-    const contentDisposition = res.headers.get("Content-Disposition");
-    const contentLength = res.headers.get("Content-Length");
-    if (contentType) headers.set("Content-Type", contentType);
-    if (contentDisposition) headers.set("Content-Disposition", contentDisposition);
-    if (contentLength) headers.set("Content-Length", contentLength);
+    // Backend returns 302 to CDN URL — forward the redirect to the browser so it downloads directly
+    if (res.status === 301 || res.status === 302 || res.status === 307 || res.status === 308) {
+      const location = res.headers.get("location");
+      if (location) {
+        return NextResponse.redirect(location, { status: 302 });
+      }
+    }
 
-    return new Response(res.body, { status: res.status, headers });
+    // Fallback for non-redirect responses
+    return new Response(res.body, { status: res.status });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
