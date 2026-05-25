@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FAQAccordion, type FAQItem } from "@/components/FAQAccordion";
 import { Button } from "@/components/ui/button";
-import { Check, Shield, Zap, Star } from "lucide-react";
+import { Check, Shield, Zap, Star, PartyPopper } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const FREE_FEATURES = [
@@ -40,6 +41,22 @@ const pricingFaqs: FAQItem[] = [
 
 export default function PricingPage() {
   const [billing, setBilling] = useState<"monthly" | "annual">("annual");
+  const [proActivated, setProActivated] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = searchParams.get("token");
+    const success = searchParams.get("success");
+    if (token) {
+      localStorage.setItem("cliplane_token", token);
+      setProActivated(true);
+      // Remove token from URL bar without a page reload
+      router.replace("/pricing?success=true");
+    } else if (success === "true") {
+      setProActivated(true);
+    }
+  }, [searchParams, router]);
 
   async function handleCheckout(plan: "monthly" | "annual") {
     try {
@@ -62,6 +79,15 @@ export default function PricingPage() {
       <Header />
 
       <main className="section-pad">
+        {proActivated && (
+          <div className="mb-6 mx-auto max-w-2xl rounded-2xl border border-[#10B981]/40 bg-[#10B981]/10 px-6 py-4 flex items-center gap-3">
+            <PartyPopper className="h-5 w-5 text-[#10B981] shrink-0" />
+            <div>
+              <p className="font-semibold text-[#10B981]">You&apos;re now Pro!</p>
+              <p className="text-sm text-[var(--text-secondary)]">Your token has been saved. Head to the <a href="/" className="underline underline-offset-2">home page</a> to start downloading in full quality.</p>
+            </div>
+          </div>
+        )}
         <div className="container-max max-w-5xl">
           {/* Header */}
           <div className="text-center mb-12">
