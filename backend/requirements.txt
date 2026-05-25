@@ -1,6 +1,7 @@
 fastapi==0.115.6
 uvicorn==0.32.1
 yt-dlp
+curl_cffi
 pydantic==2.13.4
 pydantic-settings==2.14.1
 httpx==0.28.1
