@@ -31,9 +31,19 @@ export interface ApiError {
   code?: string;
 }
 
+function getProToken(): string {
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem("cliplane_token") ?? "";
+}
+
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = getProToken();
   const res = await fetch(path, {
-    headers: { "Content-Type": "application/json", ...options?.headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "X-Pro-Token": token } : {}),
+      ...options?.headers,
+    },
     ...options,
   });
   if (!res.ok) {
@@ -54,7 +64,18 @@ export async function getPublicStats(): Promise<PublicStats> {
   return apiFetch<PublicStats>("/api/stats/public");
 }
 
-export function buildDownloadUrl(formatId: string, url: string): string {
+export function buildDownloadUrl(
+  formatId: string,
+  url: string,
+  title?: string,
+  platform?: string,
+  quality?: string,
+): string {
+  const token = getProToken();
   const params = new URLSearchParams({ format_id: formatId, url });
+  if (token) params.set("pro_token", token);
+  if (title) params.set("title", title);
+  if (platform) params.set("platform", platform);
+  if (quality) params.set("quality", quality);
   return `/api/download?${params.toString()}`;
 }

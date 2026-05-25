@@ -25,7 +25,7 @@ export function ResultCard({ result }: ResultCardProps) {
   function handleDownload() {
     if (!selectedFormat) return;
     setDownloading(true);
-    const url = buildDownloadUrl(selectedFormat.format_id, result.formats[0]?.url ?? "");
+    const url = buildDownloadUrl(selectedFormat.format_id, selectedFormat.url, result.title, result.platform, selectedFormat.quality);
     window.open(url, "_blank", "noopener,noreferrer");
     setTimeout(() => {
       setDownloading(false);
@@ -122,7 +122,7 @@ export function ResultCard({ result }: ResultCardProps) {
                   const af = audioFormats[0];
                   if (af) {
                     setSelectedFormat(af);
-                    window.open(buildDownloadUrl(af.format_id, af.url), "_blank", "noopener,noreferrer");
+                    window.open(buildDownloadUrl(af.format_id, af.url, result.title, result.platform, af.quality), "_blank", "noopener,noreferrer");
                   }
                 }}
                 className="gap-2"

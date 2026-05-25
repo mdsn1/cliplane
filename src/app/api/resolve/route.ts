@@ -12,9 +12,13 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
+    const proToken = request.headers.get("X-Pro-Token") ?? "";
     const res = await fetch(`${BACKEND}/api/resolve`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(proToken ? { "X-Pro-Token": proToken } : {}),
+      },
       body: JSON.stringify(body),
     });
     const data = await res.json().catch(() => ({ detail: `Backend returned status ${res.status} with no JSON body.` }));
